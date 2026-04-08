@@ -1,0 +1,13 @@
+# Sign Wave Project - Python Dependencies
+# Install with: pip install -r requirements.txt
+ 
+# Computer Vision
+opencv-python==4.13.0.92
+ 
+# Hand Gesture Detection
+mediapipe==0.10.33
+ 
+# Raspberry Pi GPIO Control
+# Note: gpiozero comes pre-installed on Raspberry Pi OS
+# Install manually only if needed (e.g. on Pi OS Lite or laptops)
+gpiozero==2.0.1
