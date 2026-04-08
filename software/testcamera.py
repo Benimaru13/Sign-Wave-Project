@@ -17,7 +17,7 @@ while True:
         break
     # Our 
     # Display the resulting frame
-    cv.imshow('frame')
+    cv.imshow('CAMERA', frame)
     if cv.waitKey(1) == ord('q'):
         break
  
