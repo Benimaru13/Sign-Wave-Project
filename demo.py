@@ -67,7 +67,7 @@ def print_result(result, output_image, timestamp_ms: int):
 def main():
     # Create options for live stream mode.
     options = GestureRecognizerOptions(
-        base_options=BaseOptions(model_asset_path=MODEL_PATH),
+        base_options=BaseOptions(model_asset_path=str(MODEL_PATH)),
         running_mode=RunningMode.LIVE_STREAM, 
         result_callback=print_result, # Used for when recognize_async is called below asynchronously (results come back via this callback defined above) 
     )
@@ -76,7 +76,7 @@ def main():
     with GestureRecognizer.create_from_options(options) as recognizer:
         
         # Open the default camera
-        cap = cv2.VideoCapture(1)
+        cap = cv2.VideoCapture(0)
         if not cap.isOpened():
             print('Error: could not open camera')
             return
