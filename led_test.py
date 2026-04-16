@@ -19,9 +19,12 @@ PORT    = 5005  # Must match the Mac script
 
 def setup_gpio():
     GPIO.setmode(GPIO.BCM)        # Use BCM pin numbering (matches GPIO 17 label)
-    GPIO.setup(LED_PINS, GPIO.OUT) # Set pin as output
-    GPIO.output(LED_PINS, GPIO.LOW) # Start with LED off
-    print(f"  GPIO {LED_PINS} ready — LED off")
+    
+    
+    for pin in LED_PINS:
+        GPIO.setup(pin, GPIO.OUT) # Set pin as output
+        GPIO.output(pin, GPIO.LOW) # Start with LED off
+        print(f"  GPIO {pin} ready — LED off")
 
 
 def main():
@@ -40,19 +43,28 @@ def main():
             command = data.decode().strip()
             print(f"  Received '{command}' from {addr[0]}")
 
-            if command == "ON":
+            for pin in LED_PINS:
+                GPIO.output(pin, GPIO.LOW)
+
+            if command == "PALM":
                 GPIO.output(LED_PINS[0], GPIO.HIGH)
-                print("  💡 LED ON")
-            elif command == "OFF":
-                GPIO.output(LED_PINS[0], GPIO.LOW)
-                print("  💡 LED OFF")
+                print("  💡 LED 1")
+            elif command == "FIST":
+                GPIO.output(LED_PINS[1], GPIO.HIGH)
+                print("  💡 LED 2")
+            elif command == "UP":
+                GPIO.output(LED_PINS[2], GPIO.HIGH)
+                print("  💡 LED 3")
+            elif command == "DOWN":
+                print("  💡 All LEDs OFF")
             else:
                 print(f"  ⚠ Unknown command: {command}")
 
     except KeyboardInterrupt:
         print("\n  Shutting down...")
     finally:
-        GPIO.output(LED_PINS, GPIO.LOW)  # Make sure LED is off on exit
+        for pin in LED_PINS:
+            GPIO.output(pin, GPIO.LOW)  # Make sure LED is off on exit
         GPIO.cleanup()                  # Release GPIO pins
         sock.close()
 

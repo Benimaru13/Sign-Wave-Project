@@ -26,8 +26,9 @@ PI_PORT = 5005  # Must match the Pi script
 # === GESTURES TO COMMANDS ===
 # Map MediaPipe gesture category names to LED commands
 GESTURE_MAP = {
-    "Thumb_Up":   "ON",
-    "Thumb_Down": "OFF",
+    "Thumb_Up":   "UP",
+    "Open_Palm":  "PALM",
+    "Closed_Fist":"FIST"
 }
 
 # === MediaPipe shortcuts ===
@@ -106,10 +107,10 @@ def main():
     parser.add_argument("--pi-ip", required=True, help="IP address of your Raspberry Pi e.g. 192.168.1.42")
     args = parser.parse_args()
 
-    print(f"\n🖐  Gesture Controller")
-    print(f"   Pi IP   : {args.pi_ip}:{PI_PORT}")
-    print(f"   Gestures: Open Palm = ON | Closed Fist = OFF")
-    print(f"   Press q to quit\n")
+    print(f"   Gestures:")
+    print(f"     Open Palm   → LED 1")
+    print(f"     Closed Fist → LED 2")
+    print(f"     Thumb Up    → LED 3")
 
     # UDP socket — fire and forget, no connection needed
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
