@@ -4,7 +4,7 @@ Mac-side gesture controller.
 Detects open palm / closed fist and sends ON/OFF to the Raspberry Pi.
 
 Usage:
-    python3 gesturecontrol.py --pi-ip 10.84.8.203
+    python3 gesturecontrol.py --pi-ip 10.84.73.85
 
 Requirements:
     pip3 install mediapipe opencv-python
