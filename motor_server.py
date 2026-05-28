@@ -11,7 +11,7 @@ Requirements (already on Pi OS):
 """
 
 import socket
-import RPi.GPIO as GPIO
+#import RPi.GPIO as GPIO
 from motor import Ordinary_Car
 PWD = Ordinary_Car()
 
@@ -19,7 +19,7 @@ PWD = Ordinary_Car()
 PORT    = 5005  # Must match the Mac script
 
 def main():
-    # UDP socket — listen on all network interfaces
+   # UDP socket — listen on all network interfaces
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     sock.bind(("0.0.0.0", PORT))
 
@@ -34,16 +34,18 @@ def main():
             command = data.decode().strip()
             print(f"  Received '{command}' from {addr[0]}")
 
-            if command == "ON":
+            if command == "FORWARD":
                 # Change output
                 PWD.set_motor_model(1000,1000,1000,1000)
                 print("Car moving forward")
-            elif command == "OFF":
+            elif command == "BACKWARD":
                 # Change output
                 PWD.set_motor_model(-1000,-1000,-1000,-1000)
                 print("Car moving backward")
+                
             else:
-                print(f"  ⚠ Unknown command: {command}")
+                PWD.set_motor_model(0,0,0,0)
+                print("Car stopped")
 
     except KeyboardInterrupt:
         print("\n  Shutting down...")
