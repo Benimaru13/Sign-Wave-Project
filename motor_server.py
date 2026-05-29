@@ -44,9 +44,9 @@ def main():
                 PWD.set_motor_model(-1000,-1000,-1000,-1000)
                 print("Car moving backward")
                 
-            '' elif command == "OFF":
+            ''' elif command == "OFF":
                 PWD.set_motor_model(0,0,0,0)
-                print("Car stopped") ''
+                print("Car stopped") '''
 
     except KeyboardInterrupt:
         print("\n  Shutting down...")
