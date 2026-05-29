@@ -26,6 +26,7 @@ def main():
     print(f"\n💡  LED Server listening on port {PORT}")
     print(f"   Open Palm  → Car moving forward")
     print(f"   Closed Fist → Car moving backward")
+    print(f"   Thumbs Up - Car stops:")
     print(f"   Ctrl+C to quit\n")
 
     try:
@@ -33,7 +34,7 @@ def main():
             data, addr = sock.recvfrom(1024)
             command = data.decode().strip()
             print(f"  Received '{command}' from {addr[0]}")
-
+            
             if command == "FORWARD":
                 # Change output
                 PWD.set_motor_model(1000,1000,1000,1000)
@@ -43,7 +44,7 @@ def main():
                 PWD.set_motor_model(-1000,-1000,-1000,-1000)
                 print("Car moving backward")
                 
-            else:
+            elif command == "OFF":
                 PWD.set_motor_model(0,0,0,0)
                 print("Car stopped")
 
