@@ -34,6 +34,8 @@ def main():
             data, addr = sock.recvfrom(1024)
             command = data.decode().strip()
             print(f"  Received '{command}' from {addr[0]}")
+            print(f"  Command bytes: {data}")  # DEBUG PRINT LINE
+
             
             if command == "FORWARD":
                 # Change output
