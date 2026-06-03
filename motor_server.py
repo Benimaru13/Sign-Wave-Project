@@ -35,11 +35,12 @@ def main():
             command = data.decode().strip()
             print(f"  Received '{command}' from {addr[0]}")
             
-            if command == "Forward":
+            if command == "FORWARD":
                 # Change output
                 PWD.set_motor_model(1000,1000,1000,1000)
                 print("Car moving forward")
-            elif command == "Backward":
+
+            elif command == "BACKWARD":
                 # Change output
                 PWD.set_motor_model(-1000,-1000,-1000,-1000)
                 print("Car moving backward")

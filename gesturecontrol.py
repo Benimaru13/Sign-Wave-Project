@@ -26,9 +26,9 @@ PI_PORT = 5005  # Must match the Pi script
 # === GESTURES TO COMMANDS ===
 # Map MediaPipe gesture category names to LED commands
 GESTURE_MAP = {
-    "Open_Palm":   "Forward",
-    "Closed_Fist": "Backward",
-    "Thumbs_Up":  "OFF",
+    "Open_Palm":   "FORWARD",
+    "Closed_Fist": "BACKWARD",
+    "None":  "OFF",
 }
 
 # === MediaPipe shortcuts ===
