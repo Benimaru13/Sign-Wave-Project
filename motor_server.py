@@ -35,18 +35,18 @@ def main():
             command = data.decode().strip()
             print(f"  Received '{command}' from {addr[0]}")
             
-            if command == "ON":
+            if command == "Forward":
                 # Change output
                 PWD.set_motor_model(1000,1000,1000,1000)
                 print("Car moving forward")
-            elif command == "OFF":
+            elif command == "Backward":
                 # Change output
                 PWD.set_motor_model(-1000,-1000,-1000,-1000)
                 print("Car moving backward")
                 
-            ''' elif command == "OFF":
+            elif command == "OFF":
                 PWD.set_motor_model(0,0,0,0)
-                print("Car stopped") '''
+                print("Car stopped")
 
     except KeyboardInterrupt:
         print("\n  Shutting down...")
