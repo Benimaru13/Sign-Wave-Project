@@ -94,13 +94,10 @@ def make_result_callback(sock: socket.socket, pi_ip: str):
         else:
             _latest_landmarks_norm = None
 
-        # Only send repeatedly on timer (avoid flooding the Pi)
-        if command:
-            current_time = time.time()
-            if command != last_command["value"] or current_time - last_command.get("time", 0) > 0.1:
-                send_command(sock, pi_ip, command)
-                last_command["value"] = command
-                last_command["time"] = current_time
+        # Only send when command changes (avoid flooding the Pi)
+        if command and command != last_command["value"]:
+            send_command(sock, pi_ip, command)
+            last_command["value"] = command
 
     return callback
 
