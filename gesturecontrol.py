@@ -28,7 +28,7 @@ PI_PORT = 5005  # Must match the Pi script
 GESTURE_MAP = {
     "Open_Palm":   "FORWARD",
     "Closed_Fist": "BACKWARD",
-    "None":  "OFF",
+    "Thumb_Up":  "OFF",
 }
 
 # === MediaPipe shortcuts ===
