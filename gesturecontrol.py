@@ -81,13 +81,23 @@ def make_result_callback(sock: socket.socket, pi_ip: str):
             handedness = result.handedness[0][0].category_name
             gesture_label = f"{handedness} hand - {gesture.category_name} ({gesture.score:.2f})"
             print(f"Recognized: {gesture_label}")
+
+            # Map gesture to LED command
             command = GESTURE_MAP.get(gesture.category_name)
+
+        _latest_gesture = gesture_label
+
+        # Store landmarks for drawing
+        if result and getattr(result, 'hand_landmarks', None):
+            hand0 = result.hand_landmarks[0]
+            _latest_landmarks_norm = [(lm.x, lm.y) for lm in hand0]
         else:
-            # No gesture detected — send OFF once then stop
-            if last_command["value"] != "OFF":
-                send_command(sock, pi_ip, "OFF")
-                last_command["value"] = "OFF"
-            return  # ← stop here, don't send anything else
+            _latest_landmarks_norm = None
+
+        # Only send when command changes (avoid flooding the Pi)
+        if command and command != last_command["value"]:
+            send_command(sock, pi_ip, command)
+            last_command["value"] = command
 
     return callback
 
