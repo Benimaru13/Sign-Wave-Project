@@ -7,13 +7,17 @@ import albumentations as A
 import cv2
 import mediapipe as mp
 import numpy as np
+import socket
 import torch
 from albumentations.pytorch import ToTensorV2
 from omegaconf import DictConfig, OmegaConf
 from torch import Tensor
 
-mp_drawing = mp.solutions.drawing_utils
-mp_drawing_styles = mp.solutions.drawing_styles
+from mediapipe.python.solutions import drawing_utils as mp_drawing
+from mediapipe.python.solutions import drawing_styles as mp_drawing_styles
+
+# mp_drawing = mp.solutions.drawing_utils
+# mp_drawing_styles = mp.solutions.drawing_styles
 
 from constants import targets
 from custom_utils.utils import build_model
@@ -23,6 +27,19 @@ logging.basicConfig(format="[LINE:%(lineno)d] %(levelname)-8s [%(asctime)s]  %(m
 COLOR = (0, 255, 0)
 FONT = cv2.FONT_HERSHEY_SIMPLEX
 
+# === CONFIGURATION ===
+PI_IP = "10.0.0.16"  # e.g. "10.84.73.85"
+PI_PORT = 5005
+
+# === GESTURE TO COMMAND MAP ===
+GESTURE_MAP = {
+    "like": "FORWARD",
+    "dislike": "BACKWARD",
+    "stop": "OFF",
+}
+
+sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+last_command = {"value": None}
 
 class Demo:
     @staticmethod
@@ -55,9 +72,9 @@ class Demo:
         return A.Compose(transforms_list)
 
     @staticmethod
-    def run(
-        detector, transform, conf: DictConfig, num_hands: int = 2, threshold: float = 0.5, landmarks: bool = False
-    ) -> None:
+    @staticmethod
+    def run(detector, transform, conf, num_hands=2, threshold=0.5, landmarks=False, sock=None, last_command=None):
+        print(f"Socket: {sock}, PI_IP: {PI_IP}")
         """
         Run detection model and draw bounding boxes on frame
         Parameters
@@ -127,6 +144,16 @@ class Demo:
                             (0, 0, 255),
                             thickness=3,
                         )
+
+                        # Send command to Pi if gesture is recognized
+                        gesture_name = targets[int(labels[i])]
+                        print(f"Detected: {gesture_name}, Command: {GESTURE_MAP.get(gesture_name)}")
+                        command = GESTURE_MAP.get(gesture_name)
+                        if command and command != last_command["value"]:
+                            sock.sendto(command.encode(), (PI_IP, PI_PORT))
+                            last_command["value"] = command
+                            print(f"Sent: {command}")
+
                 fps = 1 / delta
                 cv2.putText(frame, f"FPS: {fps :02.1f}, Frame: {cnt}", (30, 30), FONT, 1, COLOR, 2)
                 cnt += 1
@@ -163,4 +190,4 @@ if __name__ == "__main__":
 
     model.eval()
     if model is not None:
-        Demo.run(model, transform, conf.test_transforms, num_hands=100, threshold=0.8, landmarks=args.landmarks)
+        Demo.run(model, transform, conf.test_transforms, num_hands=100, threshold=0.8, landmarks=args.landmarks, sock=sock, last_command=last_command)
