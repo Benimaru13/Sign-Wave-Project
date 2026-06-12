@@ -4,7 +4,9 @@ Mac-side gesture controller.
 Detects open palm / closed fist and sends ON/OFF to the Raspberry Pi.
 
 Usage:
+    if the code doesn't work automatically, consider using 
     python3 gesturecontrol.py --pi-ip 10.84.8.203
+    manually. the ip address present should be that of the raspberry pi.
 
 Requirements:
     pip3 install mediapipe opencv-python
@@ -101,6 +103,17 @@ def make_result_callback(sock: socket.socket, pi_ip: str):
 
     return callback
 
+def get_pi_ip(hostname="raspberrypi.local"):
+    """Auto-discover Pi on local network."""
+    try:
+        pi_ip = socket.gethostbyname(hostname)
+        print(f"✓ Found Pi: {hostname} → {pi_ip}")
+        return pi_ip
+    except socket.gaierror:
+        print(f"✗ Could not find Pi. Make sure:")
+        print(f"   1. Pi is on the same WiFi/network")
+        print(f"   2. Avahi daemon is running: sudo systemctl status avahi-daemon")
+        return None
 
 def main():
     parser = argparse.ArgumentParser(description="Gesture-controlled LED over WiFi.")
@@ -111,6 +124,11 @@ def main():
     print(f"     Open Palm   → LED 1")
     print(f"     Closed Fist → LED 2")
     print(f"     Thumb Up    → LED 3")
+
+    # No --pi-ip argument needed!
+    pi_ip = get_pi_ip()
+    if not pi_ip:
+        return
 
     # UDP socket — fire and forget, no connection needed
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
