@@ -101,6 +101,17 @@ def make_result_callback(sock: socket.socket, pi_ip: str):
 
     return callback
 
+def get_pi_ip(hostname="raspberrypi.local"):
+    """Auto-discover Pi on local network."""
+    try:
+        pi_ip = socket.gethostbyname(hostname)
+        print(f"✓ Found Pi: {hostname} → {pi_ip}")
+        return pi_ip
+    except socket.gaierror:
+        print(f"✗ Could not find Pi. Make sure:")
+        print(f"   1. Pi is on the same WiFi/network")
+        print(f"   2. Avahi daemon is running: sudo systemctl status avahi-daemon")
+        return None
 
 def main():
     parser = argparse.ArgumentParser(description="Gesture-controlled LED over WiFi.")
@@ -111,6 +122,11 @@ def main():
     print(f"   Pi IP   : {args.pi_ip}:{PI_PORT}")
     print(f"   Gestures: Open Palm = ON | Closed Fist = OFF")
     print(f"   Press q to quit\n")
+    
+    # No --pi-ip argument needed!
+    pi_ip = get_pi_ip()
+    if not pi_ip:
+        return
 
     # UDP socket — fire and forget, no connection needed
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
