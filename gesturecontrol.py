@@ -20,7 +20,7 @@ from typing import Optional, List, Tuple
 
 # === CONFIGURATION ===
 current_directory = Path(__file__).parent
-MODEL_PATH = current_directory / 'gesture_recognizer.task'
+MODEL_PATH = current_directory / 'software' / 'gesture_recognizer.task'
 PI_PORT = 5005  # Must match the Pi script
 
 # === GESTURES TO COMMANDS ===
