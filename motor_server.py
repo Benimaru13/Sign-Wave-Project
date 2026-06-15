@@ -11,52 +11,58 @@ Requirements (already on Pi OS):
 """
 
 import socket
-#import RPi.GPIO as GPIO
 from motor import Ordinary_Car
 PWD = Ordinary_Car()
 
-# === CONFIGURATION ===
-PORT    = 5005  # Must match the Mac script
+# Create motor controller object
+car = Ordinary_Car()
+
+# UDP port (must match sender device)
+PORT = 5005
+
 
 def main():
-   # UDP socket — listen on all network interfaces
+    # Create UDP socket
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    
+    # Listen on all network interfaces
     sock.bind(("0.0.0.0", PORT))
 
-    print(f"\n💡  LED Server listening on port {PORT}")
-    print(f"   Open Palm  → Car moving forward")
-    print(f"   Closed Fist → Car moving backward")
-    print(f"   Thumbs Up - Car stops:")
-    print(f"   Ctrl+C to quit\n")
+    print(f"\nCar Controller Server running on port {PORT}")
+    print("Waiting for commands...\n")
 
     try:
         while True:
+            # Wait for incoming UDP message
             data, addr = sock.recvfrom(1024)
-            command = data.decode().strip()
-            print(f"  Received '{command}' from {addr[0]}")
-            print(f"  Command bytes: {data}")  # DEBUG PRINT LINE
 
-            
+            # Convert bytes to string command
+            command = data.decode().strip()
+
+            print(f"Received '{command}' from {addr[0]}")
+
+            # Handle movement commands
             if command == "FORWARD":
-                # Change output
-                PWD.set_motor_model(1000,1000,1000,1000)
-                print("Car moving forward")
+                car.set_motor_model(1000, 1000, 1000, 1000)
+                print("Moving forward")
 
             elif command == "BACKWARD":
-                # Change output
-                PWD.set_motor_model(-1000,-1000,-1000,-1000)
-                print("Car moving backward")
-                
+                car.set_motor_model(-1000, -1000, -1000, -1000)
+                print("Moving backward")
+
             elif command == "OFF":
-                PWD.set_motor_model(0,0,0,0)
+                car.set_motor_model(0, 0, 0, 0)
                 print("Car stopped")
 
     except KeyboardInterrupt:
-        print("\n  Shutting down...")
+        # Allows safe exit with Ctrl+C
+        print("\nShutting down...")
+
     finally:
-        PWD.set_motor_model(0,0,0,0)  # Make sure motors are off on exit
+        # Always stop motors before exiting
+        car.set_motor_model(0, 0, 0, 0)
         sock.close()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
