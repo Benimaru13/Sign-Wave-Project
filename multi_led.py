@@ -14,12 +14,14 @@ import socket
 import RPi.GPIO as GPIO
 
 # === CONFIGURATION ===
-LED_PINS = [17,27,22]    # GPIO pin your LED is wired to
-PORT    = 5005  # Must match the Mac script
+# GPIO pin your LED is wired to
+LED_PINS = [17,27,22]
+# Must match the Mac script
+PORT    = 5005  
 
 def setup_gpio():
-    GPIO.setmode(GPIO.BCM)        # Use BCM pin numbering (matches GPIO 17 label)
-    
+    # Use BCM pin numbering (matches GPIO 17 label)
+    GPIO.setmode(GPIO.BCM)        
     
     for pin in LED_PINS:
         GPIO.setup(pin, GPIO.OUT) # Set pin as output
@@ -34,7 +36,7 @@ def main():
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     sock.bind(("0.0.0.0", PORT))
 
-    print(f"\n💡  LED Server listening on port {PORT}")
+    print(f"\n LED Server listening on port {PORT}")
     print(f"   Ctrl+C to quit\n")
 
     try:
@@ -48,15 +50,15 @@ def main():
 
             if command == "PALM":
                 GPIO.output(LED_PINS[0], GPIO.HIGH)
-                print("  💡 LED 1")
+                print("  LED 1")
             elif command == "FIST":
                 GPIO.output(LED_PINS[1], GPIO.HIGH)
-                print("  💡 LED 2")
+                print("  LED 2")
             elif command == "UP":
                 GPIO.output(LED_PINS[2], GPIO.HIGH)
-                print("  💡 LED 3")
+                print("  LED 3")
             elif command == "DOWN":
-                print("  💡 All LEDs OFF")
+                print("  All LEDs OFF")
             else:
                 print(f"  ⚠ Unknown command: {command}")
 
@@ -64,7 +66,8 @@ def main():
         print("\n  Shutting down...")
     finally:
         for pin in LED_PINS:
-            GPIO.output(pin, GPIO.LOW)  # Make sure LED is off on exit
+            # Make sure LED is off on exit
+            GPIO.output(pin, GPIO.LOW)  
         GPIO.cleanup()                  # Release GPIO pins
         sock.close()
 
