@@ -3,9 +3,14 @@
 Detects gestures and sends commands to the smart car.
 
 Usage:
-    go into the virtual environment for python 3.11 : 
-    
-    python3 gesturecontrol.py --pi-ip 10.84.73.85
+    go into the virtual environment for python 3.11, go into the hagrid_model directory and run the demo.py file
+    command: 
+    .venv311\Scripts\activate
+    cd hagrid_model
+    python demo.py -p configs/SSDLiteMobileNetV3Large.yaml --landmarks     
+
+    # dont forget to change the PI_IP variable in the demo.py file to the IP address of your Raspberry Pi
+
 
 Requirements:
     install python 3.11 version
@@ -36,11 +41,6 @@ from mediapipe.python.solutions import drawing_styles as mp_drawing_styles
 from constants import targets
 from custom_utils.utils import build_model
 
-logging.basicConfig(format="[LINE:%(lineno)d] %(levelname)-8s [%(asctime)s]  %(message)s", level=logging.INFO)
-
-COLOR = (0, 255, 0)
-FONT = cv2.FONT_HERSHEY_SIMPLEX
-
 # === CONFIGURATION ===
 PI_IP = "10.0.0.16"  # e.g. "10.84.73.85"
 PI_PORT = 5005
@@ -50,9 +50,12 @@ GESTURE_MAP = {
     "like": "FORWARD",
     "dislike": "BACKWARD",
     "stop": "OFF",
-    "thumb_index": "LEFT",
-    "point": "RIGHT"
 }
+
+logging.basicConfig(format="[LINE:%(lineno)d] %(levelname)-8s [%(asctime)s]  %(message)s", level=logging.INFO)
+
+COLOR = (0, 255, 0)
+FONT = cv2.FONT_HERSHEY_SIMPLEX
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 last_command = {"value": None}
@@ -88,9 +91,7 @@ class Demo:
         return A.Compose(transforms_list)
 
     @staticmethod
-    @staticmethod
     def run(detector, transform, conf, num_hands=2, threshold=0.5, landmarks=False, sock=None, last_command=None):
-        print(f"Socket: {sock}, PI_IP: {PI_IP}")
         """
         Run detection model and draw bounding boxes on frame
         Parameters
@@ -129,10 +130,14 @@ class Demo:
                 boxes = output["boxes"][:num_hands]
                 scores = output["scores"][:num_hands]
                 labels = output["labels"][:num_hands]
+
+                hand_label = None
+
                 if landmarks:
                     results = hands.process(frame[:, :, ::-1])
                     if results.multi_hand_landmarks:
-                        for hand_landmarks in results.multi_hand_landmarks:
+                        for hand_landmarks, handedness in zip(results.multi_hand_landmarks, results.multi_handedness):
+                            hand_label = handedness.classification[0].label  # "Left" or "Right"
                             mp_drawing.draw_landmarks(
                                 frame,
                                 hand_landmarks,
@@ -163,8 +168,13 @@ class Demo:
 
                         # Send command to Pi if gesture is recognized
                         gesture_name = targets[int(labels[i])]
-                        print(f"Detected: {gesture_name}, Command: {GESTURE_MAP.get(gesture_name)}")
-                        command = GESTURE_MAP.get(gesture_name)
+                        if gesture_name == "three_gun":
+                            print(f"hand_label: {hand_label}")
+                            command = "LEFT" if hand_label == "Right" else "RIGHT"
+                            print(f"command after handedness: {command}")
+                        else:
+                            command = GESTURE_MAP.get(gesture_name)
+                        print(f"Detected: {gesture_name}, Command: {command}")
                         if command and command != last_command["value"]:
                             sock.sendto(command.encode(), (PI_IP, PI_PORT))
                             last_command["value"] = command
