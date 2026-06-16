@@ -25,7 +25,7 @@ from typing import Optional, List, Tuple
 current_directory = Path(__file__).parent
 
 # Path to the MediaPipe gesture recognition model
-MODEL_PATH = current_directory / 'gesture_recognizer.task'
+MODEL_PATH = current_directory / 'software' / 'gesture_recognizer.task'
 
 # UDP port used to communicate with the Raspberry Pi
 PI_PORT = 5005  # Must match the Pi script
