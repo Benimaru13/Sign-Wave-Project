@@ -68,7 +68,9 @@ def make_result_callback(sock: socket.socket, pi_ip: str):
     (result, output_image, timestamp_ms) — we can't add extra arguments.
     So we 'bake in' sock and pi_ip by wrapping it in an outer function.
     """
-    last_command = {"value": None}  # dict so we can mutate inside closure
+
+    # dict so we can mutate inside closure
+    last_command = {"value": None}  
 
     def callback(result, output_image, timestamp_ms: int):
         global _latest_gesture, _latest_landmarks_norm
