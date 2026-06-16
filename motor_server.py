@@ -51,6 +51,14 @@ def main():
                 PWD.set_motor_model(0,0,0,0)
                 print("Car stopped")
 
+            elif command == "LEFT":
+                PWD.set_motor_model(-1000,-1000,1000,1000)
+                print("Car turning left")
+
+            elif command == "RIGHT":
+                PWD.set_motor_model(1000,1000,-1000,-1000)
+                print("Car turning right")
+
     except KeyboardInterrupt:
         print("\n  Shutting down...")
     finally:
