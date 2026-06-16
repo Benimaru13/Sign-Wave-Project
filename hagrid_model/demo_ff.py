@@ -1,4 +1,5 @@
 import argparse
+# from cProfile import label
 import logging
 import time
 from typing import Optional, Tuple
@@ -71,11 +72,17 @@ class Demo:
                 processed_frame = Demo.preprocess(frame, transform)
                 with torch.no_grad():
                     output = classifier([processed_frame])
-                label = output["labels"].argmax(dim=1)
+                scores = torch.softmax(output["labels"], dim=1)
+                confidence, label = scores.max(dim=1)
 
-                cv2.putText(
-                    frame, targets[int(label)], (10, 100), cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 0, 255), thickness=3
-                )
+                if confidence.item() > 0.85:
+                    cv2.putText(frame, targets[int(label)], (10, 100), 
+                                cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 0, 255), thickness=3)
+
+               # cv2.putText(
+                    #frame, targets[int(label)], (10, 100), cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 0, 255), thickness=3
+                #)
+
                 fps = 1 / delta
                 cv2.putText(frame, f"FPS: {fps :02.1f}, Frame: {cnt}", (30, 30), FONT, 1, (255, 0, 255), 2)
                 cnt += 1

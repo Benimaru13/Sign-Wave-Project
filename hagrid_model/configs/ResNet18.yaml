@@ -119,7 +119,7 @@ model:
     name: ResNet18
     pretrained: False
     pretrained_backbone: False
-    checkpoint: null
+    checkpoint: ../ResNet18.pth # Path to model checkpoint for loading, if not None
 
 # Model optimizer params
 optimizer:

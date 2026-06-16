@@ -104,7 +104,7 @@ model:
     name: SSDLiteMobileNetV3Large
     pretrained: False
     pretrained_backbone: False
-    checkpoint: ../SSDLiteMobileNetV3Large.pth
+    checkpoint: ../SSDLiteMobileNetV3Large.pth # Path to model checkpoint for loading, if not None
 
 # Model optimizer params
 optimizer:

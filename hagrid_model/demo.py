@@ -1,3 +1,17 @@
+"""
+ gesture controller:
+Detects gestures and sends commands to the smart car.
+
+Usage:
+    go into the virtual environment for python 3.11 : 
+    
+    python3 gesturecontrol.py --pi-ip 10.84.73.85
+
+Requirements:
+    install python 3.11 version
+    pip install torch torchvision opencv-python albumentations omegaconf "mediapipe==0.10.21" torchmetrics
+"""
+
 import argparse
 import logging
 import time
@@ -36,6 +50,8 @@ GESTURE_MAP = {
     "like": "FORWARD",
     "dislike": "BACKWARD",
     "stop": "OFF",
+    "thumb_index": "LEFT",
+    "point": "RIGHT"
 }
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
