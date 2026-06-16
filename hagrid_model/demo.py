@@ -169,9 +169,9 @@ class Demo:
                         # Send command to Pi if gesture is recognized
                         gesture_name = targets[int(labels[i])]
                         if gesture_name == "three_gun":
-                            print(f"hand_label: {hand_label}")
-                            command = "LEFT" if hand_label == "Right" else "RIGHT"
-                            print(f"command after handedness: {command}")
+                            # print(f"hand_label: {hand_label}")
+                            command = "LEFT" if hand_label == "Left" else "RIGHT"
+                            # print(f"command after handedness: {command}")
                         else:
                             command = GESTURE_MAP.get(gesture_name)
                         print(f"Detected: {gesture_name}, Command: {command}")
